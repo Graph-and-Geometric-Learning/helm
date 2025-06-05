@@ -13,14 +13,18 @@ Official source code of HELM, a family of fully **H**yp**E**rbolic Large **L**an
 - HELM-MiCE: hyperbolic LLMs with an Mixture of Experts (MoE) module where each experts operate in a distinct curvature space to learn fine-grained token geometry
 - HELM-D: hyperbolic dense LLMs to better align with hierarchical structures in token embedding distribution
 ### Model Framework
-![Model Architecture](figure/helm_model.jpg)
+![Model Architecture](figure/helm.pdf)
 
 ### Mixture of Curvature Experts (MiCE)
-<img src="figure/MiCE.png" width="300" height="200"/>
+<p align="center">
+<img src="figure/MiCE.jpg" width="400" height="300"/>
+<p>
 The Mixture of Curvature Experts (MiCE) module is a hyperbolic MoE module that enables each experts to each operate on a distinct curvature space, so the the experts can collectively learn more fine-grained geometric structures in the token distributions. The routing is also sepcifically designed to reflect the geometric structure of the space. Please see our [paper](https://arxiv.org/abs/2505.24722) for techinical details.
 
 ### Hyperbolic Multi-Head Latent Attention (HMLA)
-<img src="figure/HMLA.jpg" width="300" height="200"/>
+<p align="center">
+<img src="figure/HMLA.jpg" width="400" height="300"/>
+<p>
 The HMLA module, similar to the Euclidean Multi-Head Latent Attention, is designed specifically for hyperbolic LLMs so that the model only needs to save the latent keys and values during generation. By projecting the original keys and values to a lower-dimensional subspace, HMLA significantlly reduces the memory footprint of the KV-cache.
 
 ## Installation
