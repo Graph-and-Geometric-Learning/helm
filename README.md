@@ -2,9 +2,9 @@
 
 # Hyperbolic Large Language Models via Mixture of Cruvature Experts
 
-[![Paper](http://img.shields.io/badge/paper-arxiv.1001.2234-B31B1B.svg)](https://arxiv.org/abs/2505.24722)
-<!-- [![Conference](http://img.shields.io/badge/AnyConference-year-4b44ce.svg)](https://papers.nips.cc/paper/2020) -->
+[![Paper](http://img.shields.io/badge/paper-arxiv.2505.24722-B31B1B.svg)](https://arxiv.org/abs/2505.24722)
 [![license](https://img.shields.io/badge/License-MIT-green.svg?labelColor=gray)](./LICENSE)
+<!-- [![Conference](http://img.shields.io/badge/AnyConference-year-4b44ce.svg)](https://papers.nips.cc/paper/2020) -->
 </div>
 
 ## Description
@@ -16,11 +16,11 @@ Official source code of HELM, a family of fully **H**yp**E**rbolic Large **L**an
 ![Model Architecture](figure/helm_model.jpg)
 
 ### Mixture of Curvature Experts (MiCE)
-![MiCE Architecture](figure/MiCE.jpg)
+<img src="figure/MiCE.png" width="300" height="200"/>
 The Mixture of Curvature Experts (MiCE) module is a hyperbolic MoE module that enables each experts to each operate on a distinct curvature space, so the the experts can collectively learn more fine-grained geometric structures in the token distributions. The routing is also sepcifically designed to reflect the geometric structure of the space. Please see our [paper](https://arxiv.org/abs/2505.24722) for techinical details.
 
 ### Hyperbolic Multi-Head Latent Attention (HMLA)
-![HMLA Architecture](figure/HMLA.jpg)
+<img src="figure/HMLA.jpg" width="300" height="200"/>
 The HMLA module, similar to the Euclidean Multi-Head Latent Attention, is designed specifically for hyperbolic LLMs so that the model only needs to save the latent keys and values during generation. By projecting the original keys and values to a lower-dimensional subspace, HMLA significantlly reduces the memory footprint of the KV-cache.
 
 ## Installation
