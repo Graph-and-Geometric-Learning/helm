@@ -157,10 +157,10 @@ To reusme HELM modules, please check the [./helm folder](./helm). For example, t
 
 ## Acknolwedgement
 This project heavily relies on the the following libraries. We thanks the authors for their awesome contributions
--[HyperCore](https://github.com/Graph-and-Geometric-Learning/HyperCore)
--[Accelerate](https://github.com/huggingface/accelerate)
--[LLM Foundry](https://github.com/mosaicml/llm-foundry)
--And [LM Evaluation Harness](https://github.com/EleutherAI/lm-evaluation-harness) for evaluation results
+- [HyperCore](https://github.com/Graph-and-Geometric-Learning/HyperCore)
+- [Accelerate](https://github.com/huggingface/accelerate)
+- [LLM Foundry](https://github.com/mosaicml/llm-foundry)
+- And [LM Evaluation Harness](https://github.com/EleutherAI/lm-evaluation-harness) for evaluation results
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE file](./LICENSE) for details.
