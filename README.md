@@ -13,7 +13,7 @@ Official source code of HELM, a family of fully **H**yp**E**rbolic Large **L**an
 - HELM-MiCE: hyperbolic LLMs with an Mixture of Experts (MoE) module where each experts operate in a distinct curvature space to learn fine-grained token geometry
 - HELM-D: hyperbolic dense LLMs to better align with hierarchical structures in token embedding distribution
 ### Model Framework
-![Model Architecture](figure/helm.pdf)
+![Model Architecture](figure/helm.jpg)
 
 ### Mixture of Curvature Experts (MiCE)
 <p align="center">
