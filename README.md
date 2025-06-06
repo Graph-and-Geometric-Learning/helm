@@ -164,3 +164,14 @@ This project heavily relies on the the following libraries. We thanks the author
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE file](./LICENSE) for details.
+
+## Citation
+You can find the full details regarding the model and modules in the paper [here](https://arxiv.org/abs/2505.24722). Please cite it as follows:
+```
+@article{he2025helm,
+  title={HELM: Hyperbolic Large Language Models via Mixture-of-Curvature Experts},
+  author={He, Neil and Anand, Rishabh and Madhu, Hiren and Maatouk, Ali and Krishnaswamy, Smita and Tassiulas, Leandros and Yang, Menglin and Ying, Rex},
+  journal={arXiv preprint arXiv:2505.24722},
+  year={2025},
+}
+```
