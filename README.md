@@ -19,7 +19,10 @@ Official source code of HELM, a family of fully **H**yp**E**rbolic Large **L**an
 <p align="center">
 <img src="figure/MiCE.jpg" width="400" height="300"/>
 <p>
+
 The Mixture of Curvature Experts (MiCE) module is a hyperbolic MoE module that enables each experts to each operate on a distinct curvature space, so the the experts can collectively learn more fine-grained geometric structures in the token distributions. The routing is also sepcifically designed to reflect the geometric structure of the space. Please see our [paper](https://arxiv.org/abs/2505.24722) for techinical details.
+
+
 
 ### Hyperbolic Multi-Head Latent Attention (HMLA)
 <p align="center">
@@ -49,7 +52,7 @@ To train the models with the default config, please first prepare the dataset fo
 python3 helm/utils/prep_data.py
 ```
 
-Then the models can be trained using the scipts found in the [example folder](./example). For example, to train the 120M parameter HELM-MiCE model as did in the paper, please run 
+Then the models can be trained using the scipts found in the [example folder](./example). For example, to train the 120M parameter HELM-MiCE model as did in the paper, run, 
 
 ```bash
 bash example/train_mice_120M.sh
