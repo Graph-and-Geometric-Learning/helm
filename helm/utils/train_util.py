@@ -121,7 +121,7 @@ def prepare_accelerator(accelerator, train_dataloader, decoder, args):
             name.endswith(".bias")
             or name.endswith(".weight") and "norm" in name.lower()
             or name.endswith(".gate.bias")
-            or name.endswith(".scale")          # if you exposed trainable scales
+            or name.endswith(".scale")          
             or "w_x" in name.lower()
         )
     
