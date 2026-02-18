@@ -3,6 +3,21 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+**/__pycache__/
+**wandb/
+**results/
+**/*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+wandb/
+outputs/
+results/
+runs/
+.DS_Store
+
 # C extensions
 *.so
 

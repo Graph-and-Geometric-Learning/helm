@@ -1,0 +1,54 @@
+# task: openbookqa
+# dataset_path: openbookqa
+# dataset_name: main
+# output_type: multiple_choice
+# training_split: train
+# validation_split: validation
+# test_split: test
+# doc_to_text: question_stem
+# doc_to_target: "{{choices.label.index(answerKey.lstrip())}}"
+# doc_to_choice: "{{choices.text}}"
+# should_decontaminate: true
+# doc_to_decontamination_query: question_stem
+# metric_list:
+#   - metric: acc
+#     aggregation: mean
+#     higher_is_better: true
+#   - metric: acc_norm
+#     aggregation: mean
+#     higher_is_better: true
+# metadata:
+#   version: 1.0
+
+# openbookqa_letters.yaml  – uses ONLY built-in Jinja templating
+task: openbookqa         # give it a new name so it won’t clash
+dataset_path: openbookqa
+dataset_name: main
+
+# ---------- core settings ----------
+output_type: multiple_choice       # rank over a fixed set of continuations
+doc_to_text: |
+  {{ question_stem }}
+  {%- for i in range(choices.label | length) %}
+  ({{ choices.label[i] }}) {{ choices.text[i] }}
+  {%- endfor %}
+  
+  Answer:
+doc_to_choice: "{{ choices.label }}"          # → ["A","B","C","D"]
+doc_to_target: "{{ answerKey.strip() }}"      # e.g. "B"
+
+# (splits and metrics left unchanged – these are the defaults anyway)
+training_split: train
+validation_split: validation
+test_split: test
+
+should_decontaminate: true
+doc_to_decontamination_query: question_stem
+
+metric_list:
+  - metric: acc
+    aggregation: mean
+    higher_is_better: true
+
+metadata:
+  version: 1.0
