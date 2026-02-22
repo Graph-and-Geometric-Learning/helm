@@ -153,6 +153,7 @@ model_config
         model architecture for HELM-D, given by La_Wb_Ac, where a is number of layers, b is model dimension, and c is number of heads
 ```
 
+### Evaluation
 For evaluation, please refer to the ***lm-evaluation-harness/lm_eval/models/helm.py*** file. The [example folder](./example) provides sripts for evaluation. For example, to test the 120M parameter HELM-MiCE model, run, 
 
 ```bash
@@ -163,7 +164,7 @@ For reproducibility, we provide the checkpoints to our trained models:
 - Please download the 100M models at the [following link](https://zenodo.org/records/18729608)
 - Please doanload the 1B model at the [following link]()
 
-***Rminder to ***access_token*** variable in the corresponding files to load the correct tokenizer.***
+***Rminder to fill in the ***access_token*** variable in the corresponding files to load the correct tokenizer.***
 
 ### Reusing Hyperbolic LLM Modules
 To reusme HELM modules, please check the [./helm folder](./helm). For example, the MiCE module is in the [mice.py file](./helm/modules/mice.py).
