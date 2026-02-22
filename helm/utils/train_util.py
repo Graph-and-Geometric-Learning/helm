@@ -7,6 +7,7 @@ from llmfoundry.data.packing import BinPackCollator
 from torch.utils.data import DataLoader  
 from helm.hypercore.optimizers import Optimizer
 from geoopt import ManifoldParameter
+from collections.abc import Mapping
 
 def get_cosine_schedule_with_warmup(
     optimizer,

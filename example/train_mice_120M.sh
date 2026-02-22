@@ -31,4 +31,4 @@ train.py \
     --qk_nope_head_dim 33\
     --qk_rope_head_dim 17\
     --v_head_dim 33\
-    --project_emb False\
+    --project_emb 0\

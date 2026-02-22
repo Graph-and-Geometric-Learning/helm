@@ -17,4 +17,4 @@ train.py \
     --find_unused_parameters True\
     --max_seq_len 2048\
     --arch L6_W390_A6\
-    --project_emb False\
+    --project_emb 0\

@@ -19,7 +19,7 @@ config_args = {
         'find_unused_parameters': (True, 'whether the accelerator should find unused parameters'),
         'max_batch_size': (1, 'Maximum batch size'),
         'max_seq_len': (2048, 'Maximum sequence length'),
-        'project_emb': (False, 'If true, the model will map tokens to space-like dimension of Lorentz vectors'),
+        'project_emb': (0, 'If true, the model will map tokens to space-like dimension of Lorentz vectors'),
         'vocab_size': (128256, 'Vocabulary size of the tokenizer')
     },
     'model_config':{
@@ -39,7 +39,7 @@ config_args = {
         'route_scale':(1., 'Scaling factor for routing scores'),
         'bias_update_speed':(0.005, 'How much to update the bias for gating to ensure expert load balancing'),
         'seq_bal_alpha': (1e-4, 'Scaling for sequence load balancing loss'),
-        'train_curv': (True, 'If true, sets the curvatures of the experts as trainable'),
+        'train_curv': (1, 'If true, sets the curvatures of the experts as trainable'),
         # hmla
         'q_lora_rank': (0, 'LoRA rank for query projections'),
         'kv_lora_rank': (257, 'LoRA rank for key-value projections'),

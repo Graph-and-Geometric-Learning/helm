@@ -137,10 +137,8 @@ class HELM_MiCE_120M(LM):
         results: List[Tuple[float, bool]] = []
         for _, string in enumerate(tqdm([req.args for req in requests])):
             context, continuation = string
-            if not context.startswith(" "):
-                    context = ' '+ context + '.'
-            else:
-                context = context + '.'
+            if not context.endswith(". "):
+                context = context + "."
             lp, _ppl, greedy = self._score_sequence(context, continuation)
             results.append((lp, greedy))
         return results
@@ -270,10 +268,8 @@ class HELM_MiCE_1B(LM):
         results: List[Tuple[float, bool]] = []
         for _, string in enumerate(tqdm([req.args for req in requests])):
             context, continuation = string
-            if not context.startswith(" "):
-                    context = ' '+ context + '.'
-            else:
-                context = context + '.'
+            if not context.endswith(". "):
+                context = context + "."
             lp, _ppl, greedy = self._score_sequence(context, continuation)
             results.append((lp, greedy))
         return results
@@ -368,10 +364,8 @@ class HELM_D_115M(LM):
         results: List[Tuple[float, bool]] = []
         for _, string in enumerate(tqdm([req.args for req in requests])):
             context, continuation = string
-            if not context.startswith(" "):
-                    context = ' '+ context + '.'
-            else:
-                context = context + '.'
+            if not context.endswith(". "):
+                context = context + "."
             lp, _ppl, greedy = self._score_sequence(context, continuation)
             results.append((lp, greedy))
         return results
