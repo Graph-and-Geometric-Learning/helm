@@ -159,6 +159,10 @@ For evaluation, please refer to the ***lm-evaluation-harness/lm_eval/models/helm
 bash example/test_mice_120M.sh
 ```
 
+For reproducibility, we provide the checkpoints to our trained models:
+- Please download the 100M models at the [following link](https://zenodo.org/records/18729608)
+- Please doanload the 1B model at the [following link]()
+
 ***Rminder to ***access_token*** variable in the corresponding files to load the correct tokenizer.***
 
 ### Reusing Hyperbolic LLM Modules

@@ -12,7 +12,7 @@ train.py \
     --find_unused_parameters True\
     --max_batch_size 4\
     --gradient_accumulation_steps 64\
-    --lr 4e-4\
+    --lr 2e-4\
     --weight_decay 0.01\
     --find_unused_parameters True\
     --max_seq_len 2048\
