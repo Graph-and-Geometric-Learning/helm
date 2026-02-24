@@ -73,14 +73,6 @@ class LorentzMLA(nn.Module):
             mscale = 0.1 * args.mscale * math.log(args.rope_factor) + 1.0
             self.softmax_scale = self.softmax_scale * mscale * mscale
 
-        # only cache the time-like dimension
-        # if attn_impl == "naive":
-        #     self.register_buffer("k_cache", torch.zeros(args.max_batch_size, args.max_seq_len, self.n_local_heads, self.qk_head_dim - 1), persistent=False)
-        #     self.register_buffer("v_cache", torch.zeros(args.max_batch_size, args.max_seq_len, self.n_local_heads, self.v_head_dim - 1), persistent=False)
-        # else:
-        #     self.register_buffer("kv_cache", torch.zeros(args.max_batch_size, args.max_seq_len, self.kv_lora_rank - 1), persistent=False)
-        #     self.register_buffer("pe_cache", torch.zeros(args.max_batch_size, args.max_seq_len, self.qk_rope_head_dim - 1), persistent=False)
-
     def project(self, x):
         x_space = x
         x_time = ((x_space ** 2).sum(dim=-1, keepdims=True) + self.manifold.c) ** 0.5
@@ -155,8 +147,6 @@ class LorentzMLA(nn.Module):
         kv = kv.view(bsz, seqlen, self.n_local_heads, self.qk_nope_head_dim + self.v_head_dim - 1)
         k_nope, v = torch.split(kv, [self.qk_nope_head_dim, self.v_head_dim - 1], dim=-1)
         k = torch.cat([k_nope, k_pe.expand(-1, -1, self.n_local_heads, -1)], dim=-1)
-        # self.k_cache[:bsz, start_pos:end_pos] = k
-        # self.v_cache[:bsz, start_pos:end_pos] = v
         
         # MLA based on hyperbolic distance
         qs = self.project(q)
@@ -169,7 +159,6 @@ class LorentzMLA(nn.Module):
 
         scores = scores.softmax(dim=-1, dtype=torch.float32).type_as(x)
 
-            # vs = self.project(self.v_cache[:bsz, :end_pos])
         vs = self.project(v)
         x = self.manifold.lorentzian_centroid(vs.transpose(1, 2), scores).transpose(1, 2) #[B, S, H, N]
         x = self.wo(x.flatten(2))

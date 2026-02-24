@@ -25,7 +25,7 @@ def precompute_theta_pos_frequencies(head_dim, seq_len, theta: float = 10000.0):
 class _LTransformerDecoderBlock(torch.nn.Module):
     """
     A single Transformer block for the decoder.
-    - Uses **masked** self-attention (causal).
+    - Uses masked self-attention (causal).
     - Uses hyperbolic normalization and activation.
     """
 
@@ -80,21 +80,17 @@ class LTransformerDecoder(torch.nn.Module):
         self.manifold_hidden = manifold_hidden
         self.manifold_out = manifold_out
 
-        # Parse architecture string
         self.layers = int(re.search(r"L(\d+)", arch).group(1))
         self.width = int(re.search(r"W(\d+)", arch).group(1))
         _attn = re.search(r"A(\d+)", arch)
         self.heads = int(_attn.group(1)) if _attn else self.width // 64
-        # Token Embeddings (Lorentz)
         self.token_embed = nn.LorentzEmbeddings(manifold_in, vocab_size, self.width, manifold_out=manifold_hidden, posit_embed=False)  # Adds positional embedding automatically
 
-        # Transformer Blocks (Decoder Only)
         self.resblocks = torch.nn.ModuleList([
             _LTransformerDecoderBlock(manifold_hidden, self.width, self.heads)
             for _ in range(self.layers)
         ])
 
-        # Final normalization and projection
         self.ln_final = nn.LorentzRMSNorm(manifold_hidden, self.width - 1)
         self.final_proj = nn.LorentzLinear(
             manifold_hidden, self.width, self.width - 1, manifold_out=manifold_hidden
