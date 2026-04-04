@@ -1,7 +1,7 @@
 import torch
 from collections import OrderedDict
 # import torch.nn as nn
-import helm.hypercore.nn as nn
+from helm.hypercore import nn as nn
 from helm.hypercore.manifolds import Lorentz
 import re
 import math
@@ -98,7 +98,6 @@ class LTransformerDecoder(torch.nn.Module):
 
         self.mapping = torch.nn.Linear(self.width, self.vocab_size, bias=False)
 
-        # **Causal Attention Mask (Precomputed)**
         attn_mask = torch.triu(
             torch.full((context_length, context_length), float("-inf")), diagonal=1
         )
@@ -122,7 +121,6 @@ class LTransformerDecoder(torch.nn.Module):
         token_embeddings = self.token_embed(text_tokens)
         freqs_cis = self.freqs_complex[:max_len]
 
-        # Forward pass through Transformer blocks
         decoder_features = token_embeddings
         for block in self.resblocks:
             decoder_features = block(decoder_features, _attn_mask, freqs_cis)
