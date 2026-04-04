@@ -232,6 +232,6 @@ class LorentzMoE(torch.nn.Module):
             denom = (-self.manifold.l_inner(ave, ave, dim=-1, keep_dim=True)).abs().clamp_min(1e-8).sqrt()
             out = self.c.sqrt() * ave / denom
         if self.training:
-            return out.view(shape), counts, scores
+            return out.view(shape), indices, scores
         else:
             return out.view(shape)
