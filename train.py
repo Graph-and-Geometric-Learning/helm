@@ -165,23 +165,23 @@ def train(args, tokenizer):
                 avg_loss = 0.0
                 losses.append(mean_loss)
 
-                if args.model_name == 'HELM_MiCE':
-                    moe_layer_id = 0
-                    for layer in decoder.module.layers:
-                        if not isinstance(layer.ffn, LorentzMoE):
-                            continue                                  
-                        stash = local_stash[moe_layer_id].to(layer.ffn.gate.bias.device)
-                        if dist.is_initialized() and dist.get_world_size() > 1:
-                            dist.all_reduce(stash, op=dist.ReduceOp.SUM) 
-                        with torch.no_grad():
-                            util = stash / stash.sum()  
-                            mean = util.mean()
-                            layer.ffn.gate.bias += layer.ffn.gate.bias_update_spd * (mean - util)
-                        if dist.is_initialized() and dist.get_world_size() > 1:
-                            dist.broadcast(layer.ffn.gate.bias.data, src=0)
-                        moe_layer_id += 1
-                    local_stash = None
-                    stash = None
+                # if args.model_name == 'HELM_MiCE':
+                #     moe_layer_id = 0
+                #     for layer in decoder.module.layers:
+                #         if not isinstance(layer.ffn, LorentzMoE):
+                #             continue                                  
+                #         stash = local_stash[moe_layer_id].to(layer.ffn.gate.bias.device)
+                #         if dist.is_initialized() and dist.get_world_size() > 1:
+                #             dist.all_reduce(stash, op=dist.ReduceOp.SUM) 
+                #         with torch.no_grad():
+                #             util = stash / stash.sum()  
+                #             mean = util.mean()
+                #             layer.ffn.gate.bias += layer.ffn.gate.bias_update_spd * (mean - util)
+                #         if dist.is_initialized() and dist.get_world_size() > 1:
+                #             dist.broadcast(layer.ffn.gate.bias.data, src=0)
+                #         moe_layer_id += 1
+                #     local_stash = None
+                #     stash = None
 
                     # moe_layer_id = 0
                     # for layer in decoder.module.layers:
