@@ -1,4 +1,4 @@
-import helm.hypercore.nn as nn
+from helm.hypercore import nn as nn
 import math
 from dataclasses import dataclass
 from typing import Tuple, Optional, Literal
