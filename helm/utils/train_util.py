@@ -61,7 +61,7 @@ def save_checkpoint_euc(accelerator, decoder, optimizer, scheduler_euc, CHECKPOI
     torch.save(checkpoint_data, ckpt_path)
     print(f"Checkpoint saved to: {ckpt_path}")
 
-def prepare_data(tokenizer, args):
+def prepare_data(tokenizer, args, return_collator=False):
     print('Loading dataset...')
     lm_dataset = load_from_disk(args.data_path)
     lm_dataset.set_format(type="torch", columns=["input_ids", "attention_mask"])
@@ -72,31 +72,66 @@ def prepare_data(tokenizer, args):
     packing_ratio = args.packing_ratio
     RAW_BATCH = int(round(PACKED_BINS_PER_GPU * packing_ratio))
 
-
     def pad_truncate_collator(examples):
-        max_len = min(max(len(ex["input_ids"]) for ex in examples), CONTEXT_LEN)
+        if isinstance(examples, Mapping):
+            keys = list(examples.keys())
+            n = len(examples[keys[0]])
+            examples = [{k: examples[k][i] for k in keys} for i in range(n)]
 
-        input_ids, attention_mask, labels = [], [], []
-        for ex in examples:
-            ids = ex["input_ids"]        
-            pad_len = max_len - len(ids)
+        if len(examples) > 0 and isinstance(examples[0], Mapping):
+            bins = [examples]  
+        elif len(examples) > 0 and isinstance(examples[0], (list, tuple)):
+            bins = examples 
+        else:
+            bins = []
+        def to_list(x):
+            return x.tolist() if torch.is_tensor(x) else list(x)
 
-            ids = torch.cat([ids, ids.new_full((pad_len,), tokenizer.pad_token_id)])
-            mask = torch.cat([torch.ones(len(ex["input_ids"]), dtype=torch.long),
-                            torch.zeros(pad_len, dtype=torch.long)])
+        B = len(examples)
+        input_ids_batch, seqid_batch = [], []
+        for bin_samples in bins:
+            ids_concat, seq_map = [], []
+            sid = 0
+            for ex in bin_samples:
+                ids = to_list(ex["input_ids"])
+                take = min(len(ids), CONTEXT_LEN - len(ids_concat))
+                if take <= 0:
+                    break
+                ids_concat.extend(ids[:take])
+                seq_map.extend([sid] * take)
+                sid += 1
+                if len(ids_concat) >= CONTEXT_LEN:
+                    break
+            pad_len = CONTEXT_LEN - len(ids_concat)
+            if pad_len > 0:
+                ids_concat.extend([tokenizer.pad_token_id] * pad_len)
+                seq_map.extend([-1] * pad_len) 
 
-            input_ids.append(ids)
-            attention_mask.append(mask)
-            lb = torch.cat([ids[1:], torch.tensor([-100])])
-            lb[mask == 0] = -100 
-            labels.append(lb)
+            input_ids_batch.append(torch.tensor(ids_concat, dtype=torch.long))
+            seqid_batch.append(torch.tensor(seq_map, dtype=torch.long))
 
-        batch = {
-            "input_ids":       torch.stack(input_ids),      
-            "attention_mask":  torch.stack(attention_mask),
-            "labels":          torch.stack(labels),
+        input_ids = torch.stack(input_ids_batch)  
+        sequence_id = torch.stack(seqid_batch)  
+        attention_mask = (sequence_id != -1).long()                           # (B, L)
+
+        expected = input_ids[:, 1:].clone()                                   # (B, L-1)
+        expected = F.pad(expected, (0, 1), value=-100)                        # (B, L), last position ignored
+        expected[attention_mask == 0] = -100
+        left_valid  = attention_mask[:, :-1].bool()
+        right_valid = attention_mask[:, 1:].bool()
+        boundary = (sequence_id[:, 1:] != sequence_id[:, :-1]) & left_valid & right_valid
+        expected[:, :-1][boundary] = -100
+        labels = expected
+        
+        # sequence_id = sequence_id.clamp_min(0)
+        assert (labels[:, :-1][left_valid & right_valid & ~boundary] == input_ids[:, 1:][left_valid & right_valid & ~boundary]).all(), \
+            "collator: labels != next token on non-boundary, non-pad positions"
+        return {
+            "input_ids": input_ids,
+            "attention_mask": attention_mask,
+            "labels": labels,
+            "sequence_id": sequence_id,  
         }
-        return batch
     
     collator = BinPackCollator(
         collator=pad_truncate_collator,
@@ -113,8 +148,10 @@ def prepare_data(tokenizer, args):
         pin_memory=True,
         collate_fn=collator,    
     )
-
-    return train_dataloader
+    if not return_collator:
+        return train_dataloader
+    else:
+        return lm_dataset, collator, RAW_BATCH
 
 def prepare_accelerator(accelerator, train_dataloader, decoder, args):
     def is_no_decay(name):
