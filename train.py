@@ -35,6 +35,7 @@ def sequence_balance_loss(scores: torch.Tensor, indices: torch.Tensor, alpha: fl
     # k    = indices.size(1)  
     k=2
     indices = indices.type_as(scores)
+    freq = torch.bincount(indices.flatten(), minlength=E).float()
     freq = indices * (E / (k * N))         
     probs = scores / scores.sum(dim=-1, keepdim=True)
     P = probs.mean(dim=0)
@@ -130,13 +131,22 @@ def train(args, tokenizer):
                         for _ in range(len(indices_list))
                     ]
                 for lid, idx in enumerate(indices_list):                       # idx (tokens, topk)
-                    local_stash[lid] += torch.tensor(idx, device='cpu', dtype=torch.float32)
+                    local_stash[lid] += torch.bincount(
+                        idx.flatten().cpu(), minlength=args.n_routed_experts   # 64-element vector
+                    ).float()
                 
                 indices_list = None
                 loss = loss + loss_bal
 
             accelerator.backward(loss)
             avg_loss += loss.item()
+            # if args.model_name == 'HELM_MiCE':
+            #     micro_indices = [accelerator.gather(idx) for idx in indices_list]
+            #     if ("stash" not in locals()) or (stash is None):
+            #         stash = [ [] for _ in range(len(indices_list)) ]
+    
+            #     for layer_id, idx in enumerate(indices_list):
+            #         stash[layer_id].append(idx.cpu()) 
 
             if accelerator.sync_gradients:
                 accelerator.clip_grad_norm_(decoder.parameters(), 1.0)
@@ -172,6 +182,18 @@ def train(args, tokenizer):
                         moe_layer_id += 1
                     local_stash = None
                     stash = None
+
+                    # moe_layer_id = 0
+                    # for layer in decoder.module.layers:
+                    #     if not isinstance(layer.ffn, LorentzMoE):
+                    #         continue                           
+                    #     # concatenate micro‑batches for this layer
+                    #     step_indices = torch.cat(stash[moe_layer_id], dim=0)
+                    #     layer.ffn.gate.update_bias(step_indices)
+                    #     if dist.is_initialized() and dist.get_world_size() > 1:
+                    #         dist.broadcast(layer.ffn.gate.bias.data, src=0)
+                    #     moe_layer_id += 1
+                    # stash = None
 
                 if accelerator.is_main_process and writer is not None:
                         writer.add_scalar("train/loss", mean_loss, global_step)
